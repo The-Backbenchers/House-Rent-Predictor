@@ -15,7 +15,7 @@ def main():
     loaded_best_model = joblib.load('best_model.pkl')
 
     # Streamlit App
-    st.title('House Rent Prediction App')
+    st.title('Haldia House Rent Prediction App')
 
     # Create input widgets for each feature
     user_input = {
