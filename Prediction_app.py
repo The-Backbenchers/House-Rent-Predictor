@@ -15,22 +15,32 @@ def main():
     loaded_best_model = joblib.load('best_model.pkl')
 
     # Streamlit App
-    st.title('Haldia House Rent Prediction App')
+    st.title('House Rent Prediction App')
+
+    # Add section headers
+    st.header('Residence Details')
 
     # Create input widgets for each feature
-    user_input = {
-        'Residence_Type': st.selectbox("Select Residence Type:", ('flat', 'shared room', 'single room')),
-        'Residence_Score': st.number_input("Give Residence Score:", 0, 5, step=1),
-        'Attached_bathroom': st.selectbox("Attached Bathroom:", ('Yes', 'No')),
-        'attached_kitchens': st.selectbox("Attached Kitchen:", ('Yes', 'No')),
-        'avl_shoopingmall': st.selectbox("Available Shopping Mall:", ('Yes', 'No')),
-        'avl_transport_facility_colllege': st.selectbox("Available Transport Facility:", ('Yes', 'No')),
-        'avl_medical': st.selectbox("Available Medical Facility:", ('Yes', 'No')),
-        'avl_fooding': st.number_input("Number of canteen available:", 1, 5, step=1),
-        'avl_transport_market_time': st.selectbox("Minimum Duration to reach Market(in minutes):", (5, 10, 15)),
-        'transport_time': st.selectbox("Minimum Duration to reach College(in minutes):", (10, 5, 15, 20, 30)),
-        'avl_play_ground': st.selectbox("Available Playground:", ('Yes', 'No')),
-    }
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        user_input = {
+            'Residence_Type': st.selectbox("Select Residence Type:", ('flat', 'shared room', 'single room')),
+            'Residence_Score': st.number_input("Give Residence Score:", 0, 5, step=1),
+            'Attached_bathroom': st.selectbox("Attached Bathroom:", ('Yes', 'No')),
+            'attached_kitchens': st.selectbox("Attached Kitchen:", ('Yes', 'No')),
+            'avl_shoopingmall': st.selectbox("Available Shopping Mall:", ('Yes', 'No')),
+        }
+
+    with col2:
+        user_input.update({
+            'avl_transport_facility_colllege': st.selectbox("Available Transport Facility:", ('Yes', 'No')),
+            'avl_medical': st.selectbox("Available Medical Facility:", ('Yes', 'No')),
+            'avl_fooding': st.number_input("Number of canteen available:", 1, 5, step=1),
+            'avl_transport_market_time': st.selectbox("Min Duration to reach Market (in minutes):", (5, 10, 15)),
+            'transport_time': st.selectbox("Min Duration to reach College (in minutes):", (10, 5, 15, 20, 30)),
+            'avl_play_ground': st.selectbox("Available Playground:", ('Yes', 'No')),
+        })
 
     # Process user input
     user_input['Residence_Type'] = code_Residence_Type(user_input['Residence_Type'])
@@ -50,9 +60,11 @@ def main():
             # Convert user input to DataFrame
             user_input_df = pd.DataFrame([user_input])
 
-            # Predict the house rent based on user input
-            prediction = loaded_best_model.predict(user_input_df)[0]
-            prediction = str(prediction)
+            # Display loading message
+            with st.spinner('Predicting...'):
+                # Predict the house rent based on user input
+                prediction = loaded_best_model.predict(user_input_df)[0]
+                prediction = str(prediction)
 
             # Display the prediction in the middle of the display
             st.subheader('Predicted House Rent:')
